@@ -5,9 +5,9 @@ export enum TodoStatusEnum {
 }
 
 export class Todo {
-  id: number;
+  id: string;
   name: string;
   description: string;
-  createdAt: Date;
-  status: TodoStatusEnum;
+  createdAt: Date = new Date();
+  status: TodoStatusEnum = TodoStatusEnum.waiting;
 }
