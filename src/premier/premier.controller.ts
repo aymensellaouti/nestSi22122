@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 
 @Controller('premier')
 export class PremierController {
@@ -7,7 +7,8 @@ export class PremierController {
     return 'Hello SI2';
   }
   @Post('')
-  post() {
-    return 'Post Hello SI2';
+  post(@Body() requestBody) {
+    console.log(requestBody);
+    return requestBody;
   }
 }
