@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { Todo } from './todo.model';
 import { v4 as uuidv4 } from 'uuid';
-import { AddTodoDto } from "./dto/addTodo.dto";
+import { AddTodoDto } from './dto/addTodo.dto';
 @Controller('todo')
 export class TodoController {
   todos: Todo[] = [];
