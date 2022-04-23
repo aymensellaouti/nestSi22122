@@ -3,11 +3,22 @@ import { Todo } from './todo.model';
 import { AddTodoDto } from './dto/addTodo.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateTodoDto } from './dto/updateTodo.dto';
+import { Repository } from 'typeorm';
+import { TodoEntity } from './entities/todo.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
 export class TodoService {
   todos: Todo[] = [];
+
+  constructor(
+    @InjectRepository(TodoEntity)
+    private todoRepository: Repository<TodoEntity>,
+  ) {}
   getTodos(): Todo[] {
     return this.todos;
+  }
+  addTodoDb(newTodo: AddTodoDto): Promise<TodoEntity> {
+    return this.todoRepository.save(newTodo);
   }
   addTodo(newTodo: AddTodoDto): Todo {
     const todo = new Todo();

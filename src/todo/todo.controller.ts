@@ -13,7 +13,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { AddTodoDto } from './dto/addTodo.dto';
 import { TodoService } from './todo.service';
 import { UpdateTodoDto } from './dto/updateTodo.dto';
-@Controller('todo')
+@Controller({
+  path: 'todo',
+  version: '1',
+})
 export class TodoController {
   constructor(private todoService: TodoService) {}
   // Une route = Methode + Uri
@@ -23,6 +26,7 @@ export class TodoController {
   }
   @Post()
   addTodo(@Body() newTodo: AddTodoDto): Todo {
+    console.log(newTodo);
     return this.todoService.addTodo(newTodo);
   }
   // /todo/:id
