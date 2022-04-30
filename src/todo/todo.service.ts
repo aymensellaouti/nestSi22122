@@ -8,6 +8,7 @@ import { TodoEntity } from './entities/todo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';
 import { SearchCriteriaDto } from './dto/search-criteria.dto';
+import { paginate } from "../generics/db/utils";
 
 @Injectable()
 export class TodoService {
@@ -119,8 +120,20 @@ export class TodoService {
       // { status: In([TodoStatusEnum.actif, TodoStatusEnum.done]) },
     );
   }
-  findAllTodosQB(): Promise<TodoEntity[]> {
+  findAllTodosQB(searchCriterias: SearchCriteriaDto): Promise<TodoEntity[]> {
     const qb = this.todoRepository.createQueryBuilder('t');
+    const { criteria, status, page, nombre } = searchCriterias;
+    if (criteria) {
+      qb.andWhere('t.name like :criteria or t.description like :criteria', {
+        criteria: `%${criteria}%`,
+      });
+    }
+    if (status) {
+      qb.andWhere('t.status = :status', { status });
+    }
+    if (nombre) {
+      paginate(qb, page, nombre);
+    }
     console.log('qb', qb);
     return qb.getMany();
   }
@@ -130,5 +143,10 @@ export class TodoService {
       throw new NotFoundException('Le todo n existe pas !!');
     }
     return todo;
+  }
+  statsByStatusNumber(): Promise<any> {
+    const qb = this.todoRepository.createQueryBuilder('t');
+    qb.select('status, count(status) as number').groupBy('status');
+    return qb.getRawMany();
   }
 }

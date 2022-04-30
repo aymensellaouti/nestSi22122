@@ -12,6 +12,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { devConfig } from '../config/dev.config';
 import { prodConfig } from '../config/prod.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { SkillModule } from './skill/skill.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       }),
       inject: [ConfigService],
     }),
+    SkillModule,
   ],
   controllers: [AppController],
   providers: [],

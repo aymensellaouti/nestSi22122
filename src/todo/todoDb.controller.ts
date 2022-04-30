@@ -49,10 +49,14 @@ export class TodoDbController {
     @Query() searchCriterias: SearchCriteriaDto,
   ): Promise<TodoEntity[]> {
     // return this.todoService.findAllTodos(searchCriterias);
-    return this.todoService.findAllTodosQB();
+    return this.todoService.findAllTodosQB(searchCriterias);
   }
   @Get(':id')
   findTodoById(@Param('id') id: string): Promise<TodoEntity> {
     return this.todoService.findTodoByIdDb(id);
+  }
+  @Get('/stats/status/number')
+  statsStatusNumber(): Promise<any> {
+    return this.todoService.statsByStatusNumber();
   }
 }
