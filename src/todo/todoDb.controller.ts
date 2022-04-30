@@ -42,4 +42,8 @@ export class TodoDbController {
   restoreTodo(@Param('id') id: string): Promise<UpdateResult> {
     return this.todoService.restore(id);
   }
+  @Get('/stats/status')
+  statusTodo(): Promise<any> {
+    return this.todoService.statsStatusTodo();
+  }
 }

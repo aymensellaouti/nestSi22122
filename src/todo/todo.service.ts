@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Todo } from './todo.model';
+import { Todo, TodoStatusEnum } from './todo.model';
 import { AddTodoDto } from './dto/addTodo.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateTodoDto } from './dto/updateTodo.dto';
@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { TodoEntity } from './entities/todo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';
+
 @Injectable()
 export class TodoService {
   todos: Todo[] = [];
@@ -81,6 +82,23 @@ export class TodoService {
     if (result.affected == 0) {
       throw new NotFoundException(`Le Todo d'id ${id} n'existe pas`);
     }
+    return result;
+  }
+  async statsStatusTodo(): Promise<any> {
+    const nbTodoStatusAwaiting = await this.todoRepository.count({
+      status: TodoStatusEnum.waiting,
+    });
+    const nbTodoStatusDone = await this.todoRepository.count({
+      status: TodoStatusEnum.done,
+    });
+    const nbTodoStatusActif = await this.todoRepository.count({
+      status: TodoStatusEnum.actif,
+    });
+    const result = {
+      waiting: nbTodoStatusAwaiting,
+      done: nbTodoStatusDone,
+      actif: nbTodoStatusActif,
+    };
     return result;
   }
 }
