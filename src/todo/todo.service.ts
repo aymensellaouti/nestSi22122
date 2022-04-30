@@ -3,10 +3,11 @@ import { Todo, TodoStatusEnum } from './todo.model';
 import { AddTodoDto } from './dto/addTodo.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateTodoDto } from './dto/updateTodo.dto';
-import { Repository } from 'typeorm';
+import { In, Like, MoreThan, Repository } from 'typeorm';
 import { TodoEntity } from './entities/todo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';
+import { SearchCriteriaDto } from './dto/search-criteria.dto';
 
 @Injectable()
 export class TodoService {
@@ -100,5 +101,34 @@ export class TodoService {
       actif: nbTodoStatusActif,
     };
     return result;
+  }
+  findAllTodos(searchCriterias: SearchCriteriaDto): Promise<TodoEntity[]> {
+    const criterias = [];
+    const { criteria, status } = searchCriterias;
+    if (criteria) {
+      criterias.push({ name: Like(`%${criteria}%`) });
+      criterias.push({ description: Like(`%${criteria}%`) });
+    }
+    if (status) {
+      criterias.push({ status });
+    }
+    return this.todoRepository.find(
+      { where: criterias },
+      // { createdAt: MoreThan('2022-04-29') },
+      /*{ withDeleted: true }*/
+      // { status: In([TodoStatusEnum.actif, TodoStatusEnum.done]) },
+    );
+  }
+  findAllTodosQB(): Promise<TodoEntity[]> {
+    const qb = this.todoRepository.createQueryBuilder('t');
+    console.log('qb', qb);
+    return qb.getMany();
+  }
+  async findTodoByIdDb(id: string): Promise<TodoEntity> {
+    const todo = await this.todoRepository.findOne(id);
+    if (!todo) {
+      throw new NotFoundException('Le todo n existe pas !!');
+    }
+    return todo;
   }
 }

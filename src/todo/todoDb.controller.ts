@@ -3,19 +3,17 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   Patch,
   Post,
-  Put,
+  Query,
 } from '@nestjs/common';
-import { Todo } from './todo.model';
-import { v4 as uuidv4 } from 'uuid';
 import { AddTodoDto } from './dto/addTodo.dto';
 import { TodoService } from './todo.service';
 import { UpdateTodoDto } from './dto/updateTodo.dto';
 import { TodoEntity } from './entities/todo.entity';
 import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';
+import { SearchCriteriaDto } from './dto/search-criteria.dto';
 @Controller({
   path: 'todo',
   version: '2',
@@ -45,5 +43,16 @@ export class TodoDbController {
   @Get('/stats/status')
   statusTodo(): Promise<any> {
     return this.todoService.statsStatusTodo();
+  }
+  @Get('')
+  findAllTodos(
+    @Query() searchCriterias: SearchCriteriaDto,
+  ): Promise<TodoEntity[]> {
+    // return this.todoService.findAllTodos(searchCriterias);
+    return this.todoService.findAllTodosQB();
+  }
+  @Get(':id')
+  findTodoById(@Param('id') id: string): Promise<TodoEntity> {
+    return this.todoService.findTodoByIdDb(id);
   }
 }
