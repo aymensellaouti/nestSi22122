@@ -6,6 +6,7 @@ import { UpdateTodoDto } from './dto/updateTodo.dto';
 import { Repository } from 'typeorm';
 import { TodoEntity } from './entities/todo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';
 @Injectable()
 export class TodoService {
   todos: Todo[] = [];
@@ -48,11 +49,38 @@ export class TodoService {
     todo.status = status ?? todo.status;
     return todo;
   }
+  async updateDbTodo(
+    id: string,
+    newTodoData: UpdateTodoDto,
+  ): Promise<TodoEntity> {
+    //  1- Chercher l'élément à mettre à jour
+    const todo = await this.todoRepository.preload({ id, ...newTodoData });
+    if (!todo) {
+      throw new NotFoundException(`Todo innexistant !!`);
+    }
+    //  2- Mettre à jour les champs envoyé via le body
+    return this.todoRepository.save(todo);
+  }
   findTodoById(id: string): Todo {
     const todo = this.todos.find((todo) => todo.id == id);
     if (!todo) {
       throw new NotFoundException(`Le Todo d'id ${id} n'existe pas`);
     }
     return todo;
+  }
+
+  async softDelete(id: string): Promise<UpdateResult> {
+    const result: UpdateResult = await this.todoRepository.softDelete(id);
+    if (result.affected == 0) {
+      throw new NotFoundException(`Le Todo d'id ${id} n'existe pas`);
+    }
+    return result;
+  }
+  async restore(id: string): Promise<UpdateResult> {
+    const result: UpdateResult = await this.todoRepository.restore(id);
+    if (result.affected == 0) {
+      throw new NotFoundException(`Le Todo d'id ${id} n'existe pas`);
+    }
+    return result;
   }
 }
