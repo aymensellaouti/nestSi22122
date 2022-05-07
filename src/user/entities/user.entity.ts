@@ -1,7 +1,10 @@
 import { TimestampEntity } from '../../generics/timestamp.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Cv } from '../../cv/entities/cv.entity';
-
+export enum UserRoleEnum {
+  admin = 'role:admin',
+  user = 'role:user',
+}
 @Entity()
 export class User extends TimestampEntity {
   @PrimaryGeneratedColumn()
@@ -16,4 +19,10 @@ export class User extends TimestampEntity {
   password: string;
   @OneToMany(() => Cv, (cv) => cv.user, {})
   cvs: Cv[];
+  @Column({
+    type: 'enum',
+    enum: UserRoleEnum,
+    default: UserRoleEnum.user,
+  })
+  role: UserRoleEnum;
 }

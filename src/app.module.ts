@@ -16,6 +16,7 @@ import { SkillModule } from './skill/skill.module';
 import { CvModule } from './cv/cv.module';
 import { UserModule } from './user/user.module';
 import { MulterModule } from "@nestjs/platform-express";
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { MulterModule } from "@nestjs/platform-express";
     CvModule,
     UserModule,
     MulterModule.register(),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [],

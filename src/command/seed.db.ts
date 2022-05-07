@@ -3,7 +3,7 @@ import { AppModule } from '../app.module';
 import { SkillService } from '../skill/skill.service';
 import { Skill } from '../skill/entities/skill.entity';
 import { UserService } from '../user/user.service';
-import { User } from '../user/entities/user.entity';
+import { User, UserRoleEnum } from "../user/entities/user.entity";
 import {
   randEmail,
   randFirstName,
@@ -30,7 +30,7 @@ async function bootstrap() {
     user.email = randEmail();
     user.username = randUserName();
     user.password = i % 3 == 0 ? 'admin' : 'user';
-    // user.role = i % 3 == 0 ? UserRoleEnum.admin : UserRoleEnum.user;
+    user.role = i % 3 == 0 ? UserRoleEnum.admin : UserRoleEnum.user;
     await userService.create(user);
   }
   const skills = await skillService.findAll({});
