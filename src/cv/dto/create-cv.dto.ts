@@ -8,6 +8,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { User } from "../../user/entities/user.entity";
 
 export class CreateCvDto {
   @IsString()
@@ -49,6 +50,7 @@ export class CreateCvDto {
   job: string;
   @IsOptional()
   path: string;
+  user: User;
   // @IsOptional()
   // skills: Skill[];
   // user: User;

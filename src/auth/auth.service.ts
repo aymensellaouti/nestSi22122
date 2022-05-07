@@ -1,12 +1,21 @@
-import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { UserService } from '../user/user.service';
-import { User } from "../user/entities/user.entity";
-import { LoginDto } from "./dto/login.dto";
+import { User } from '../user/entities/user.entity';
+import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { JwtpayloadDto } from './dto/jwtpayload.dto';
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService,
+  ) {}
 
   async register(registerDto: RegisterDto): Promise<User> {
     const { username, email } = registerDto;
@@ -22,8 +31,8 @@ export class AuthService {
     }
   }
 
-  async login(loginDto: LoginDto) {
-  //  Todo chercher le user avec cet email ou ce username
+  async login(loginDto: LoginDto): Promise<{ jwt: string }> {
+    //  Todo chercher le user avec cet email ou ce username
     const { username, password } = loginDto;
     //  Todo Vérifier est ce qu'il y a un user avec cet email ou ce username
     const user = await this.userService.findUserByEmailOrUsername(
@@ -37,8 +46,13 @@ export class AuthService {
       if (!isUser) {
         throw new UnauthorizedException(`Veuillez vérifier vos credentials`);
       } else {
-        delete user.password;
-        return user;
+        const payload: JwtpayloadDto = {
+          username: user.username,
+          email: user.email,
+          role: user.role,
+        };
+        const jwt = this.jwtService.sign(payload);
+        return { jwt };
       }
     }
   }
