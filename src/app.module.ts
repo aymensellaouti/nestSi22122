@@ -13,6 +13,9 @@ import { devConfig } from '../config/dev.config';
 import { prodConfig } from '../config/prod.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SkillModule } from './skill/skill.module';
+import { CvModule } from './cv/cv.module';
+import { UserModule } from './user/user.module';
+import { MulterModule } from "@nestjs/platform-express";
 
 @Module({
   imports: [
@@ -38,6 +41,9 @@ import { SkillModule } from './skill/skill.module';
       inject: [ConfigService],
     }),
     SkillModule,
+    CvModule,
+    UserModule,
+    MulterModule.register(),
   ],
   controllers: [AppController],
   providers: [],
